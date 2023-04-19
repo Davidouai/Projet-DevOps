@@ -4,5 +4,3 @@
 Java equivalent of python's Panda library
 
 Checkout our website at https://hugolinbouhineau.github.io/Projet-DevOps/ !
-
-test
