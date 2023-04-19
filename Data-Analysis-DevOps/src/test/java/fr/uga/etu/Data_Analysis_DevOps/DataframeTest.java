@@ -32,4 +32,16 @@ public class DataframeTest
     		}
     	}
     }
+
+    @Test
+    public void checkCSV()
+    {
+    	int[] indexes = new int[18];
+    	for (int i = 0; i < 18; i++) {
+    		indexes[i] = i;
+    	}
+    	data = new Dataframe("/home/m/mailletd/Bureau/quotas.csv", indexes);
+    	//System.out.println("quota : " + data.get("Username", 1));
+    	assertTrue(true);
+    }
 }

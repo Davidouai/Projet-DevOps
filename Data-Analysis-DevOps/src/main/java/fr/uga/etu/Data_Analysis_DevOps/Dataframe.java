@@ -41,6 +41,45 @@ public class Dataframe
 		
 	}
 	
+	Dataframe(String filename, int[] indexes) {
+		data = new HashMap<>();
+		ArrayList<String> labels = new ArrayList<>();
+		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+			String line;
+			ArrayList<String> array = new ArrayList<>();
+			
+			int i = 0;
+		    while ((line = br.readLine()) != null) {
+		        String[] values = line.split(",");
+		        array = new ArrayList<String>(Arrays.asList(values));
+		        
+		        if (i == 0) {	// Première ligne : labels
+		        	labels = array;
+		        } else {	// TODO : voir si int ou string et enlever les guillemets
+		        	for(int j = 0; j < array.size(); j++) {
+		        		if (data.get(labels.get(j)) != null) {
+		        			data.get(labels.get(j)).add(array.get(j));
+		        		} else {
+			        		ArrayList<String> c = new ArrayList<>();
+			        		c.add(array.get(j));
+							Column<String> column = new Column<>(c);
+			        		data.put(labels.get(j), column);
+		        		}
+		        	}
+				    
+		        }
+			    i++;
+		    }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		this.indexes = new HashMap<>();
+		for(int i = 0; i < indexes.length; i++) {
+			this.indexes.put(indexes[i], i);
+		}
+	}
+	
 	public Object get(String label, int index) {
 		return data.get(label).get(indexes.get(index));
 	}

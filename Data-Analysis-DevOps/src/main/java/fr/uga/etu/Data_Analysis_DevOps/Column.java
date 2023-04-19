@@ -13,4 +13,8 @@ public class Column<T> {
 		return data.get(i);
 	}
 	
+	public void add(T obj) {
+		data.add(obj);
+	}
+	
 }
