@@ -2,6 +2,7 @@ package fr.uga.etu.Data_Analysis_DevOps;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
@@ -16,22 +17,51 @@ public class DataframeTest
      * Rigorous Test :-)
      */
 	Dataframe data;
+	Dataframe dataCSV;
+	Object[][] objects;
+	String[] labels;
+	int[] indexes;
+	int[] indexesCSV;
+	
+	@Before
+	public void init() {
+    	objects = new Object[4][3];
+    	objects[0][0] = "Grenoble";
+    	objects[1][0] = "Paris";
+    	objects[2][0] = "Lyon";
+    	objects[3][0] = "Marseille";
+    	
+    	objects[0][1] = 115.45;
+    	objects[1][1] = 300.59;
+    	objects[2][1] = 256.78;
+    	objects[3][1] = 234.56;
+    	
+    	objects[0][2] = 200000;
+    	objects[1][2] = 6000000;
+    	objects[2][2] = 2000000;
+    	objects[3][2] = 1000000;
+    	
+    	String [] l = {"ville", "taille", "population"};
+    	labels = l;
+    	int [] i = {10, 5, 20, 9};
+    	indexes = i;
+    	
+    	data = new Dataframe(objects, labels, indexes);
+    	indexesCSV = new int[18];
+    	for (int k = 0; k< 18; k++) {
+    		indexesCSV[k] = k*k;
+    	}
+    	
+    	dataCSV = new Dataframe("/quotas.csv", indexesCSV);
+	}
+	
+	
     @Test
     public void checkClumnsAccess()
     {
-    	Object[][] o = new Object[2][2];
-    	o[0][0] = "Grenoble";
-    	o[1][0] = "Paris";
-    	o[0][1] = 115;
-    	o[1][1] = 300;
-    	
-    	String[] l = {"ville", "taille"};
-    	int[] indexes = {10, 5};
-    	
-    	data = new Dataframe(o, l, indexes);
     	for(int i = 0; i < indexes.length; i++) {
-    		for(int j = 0; j < l.length; j++) {
-    			assertEquals(data.get(l[j], indexes[i]), o[i][j]);
+    		for(int j = 0; j < labels.length; j++) {
+    			assertEquals(data.get(labels[j], indexes[i]), objects[i][j]);
     		}
     	}
     }
@@ -39,33 +69,54 @@ public class DataframeTest
     @Test
     public void checkCSV()
     {
-    	int[] indexes = new int[18];
-    	for (int i = 0; i < 18; i++) {
-    		indexes[i] = i*i;
+    	assertEquals(dataCSV.get("Username", indexesCSV[6]), "trailhead19.d1fxj2goytkp@example.com");
+    }
+
+    @Test
+    public void checkLineSelection()
+    {
+    	Object[][] o2 = data.selectLines(indexes);
+
+    	for(int i = 0; i < indexes.length; i++) {
+    		for(int j = 0; j < labels.length; j++) {
+    			assertEquals(objects[i][j], o2[i][j]);
+    		}
     	}
-    	data = new Dataframe("/quotas.csv", indexes);
-    	assertEquals(data.get("Username", indexes[6]), "trailhead19.d1fxj2goytkp@example.com");
+    }
+
+    @Test
+    public void checkColumnSelection()
+    {
+    	Object[][] o2 = data.selectColumns(labels);
+
+    	for(int i = 0; i < indexes.length; i++) {
+    		for(int j = 0; j < labels.length; j++) {
+    			assertEquals(objects[i][j], o2[i][j]);
+    		}
+    	}
+    }
+
+    @Test
+    public void checkEqualsSelection()
+    {
+    	Object[][] o2 = data.selectLinesEquals(6000000);
+    	
+    	assertEquals(o2[0][0], objects[1][0]);
+    	
     }
     
     @Test
     public void printAllTest()
     {
-    	Object[][] o = new Object[2][2];
-    	o[0][0] = "Grenoble";
-    	o[1][0] = "Paris";
-    	o[0][1] = 115;
-    	o[1][1] = 300;
-    	
-    	String[] l = {"ville", "taille"};
-    	int[] indexes = {10, 5};
-    	
-    	data = new Dataframe(o, l, indexes);
-    	
     	ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     	PrintStream originalOut = System.out;
     	System.setOut(new PrintStream(outContent));
     	data.printAll();
-    	String expected = "ville taille \n" + "Grenoble 115 \n" + "Paris 300 \n";
+    	String expected = "ville taille population \n"
+    			+ "Grenoble 115.45 200000 \n"
+    			+ "Paris 300.59 6000000 \n"
+    			+ "Lyon 256.78 2000000 \n"
+    			+ "Marseille 234.56 1000000 \n";
     	assertEquals(expected, outContent.toString());
     	System.setOut(originalOut);
     }
@@ -73,16 +124,10 @@ public class DataframeTest
     @Test
     public void printAllCSVTest()
     {
-    	int[] indexes = new int[18];
-    	for (int i = 0; i < 18; i++) {
-    		indexes[i] = i*i;
-    	}
-    	data = new Dataframe("/quotas.csv", indexes);
-    	
     	ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     	PrintStream originalOut = System.out;
     	System.setOut(new PrintStream(outContent));
-    	data.printAll();
+    	dataCSV.printAll();
     	String expected = "StartDate OwnerName Username Rating QuotaAmount \n"
     			+ "2016-01-01 Chris Riley trailhead9.ub20k5i9t8ou@example.com 0.1 150000 \n"
     			+ "2016-02-01 Chris Riley trailhead9.ub20k5i9t8ou@example.com 0.2 150000 \n"
@@ -110,22 +155,15 @@ public class DataframeTest
     @Test
     public void printHeadTest()
     {
-    	Object[][] o = new Object[2][2];
-    	o[0][0] = "Grenoble";
-    	o[1][0] = "Paris";
-    	o[0][1] = 115;
-    	o[1][1] = 300;
-    	
-    	String[] l = {"ville", "taille"};
-    	int[] indexes = {10, 5};
-    	
-    	data = new Dataframe(o, l, indexes);
-    	
     	ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     	PrintStream originalOut = System.out;
     	System.setOut(new PrintStream(outContent));
     	data.printHead();
-    	String expected = "ville taille \n" + "Grenoble 115 \n" + "Paris 300 \n";
+    	String expected = "ville taille population \n"
+    			+ "Grenoble 115.45 200000 \n"
+    			+ "Paris 300.59 6000000 \n"
+    			+ "Lyon 256.78 2000000 \n"
+    			+ "Marseille 234.56 1000000 \n";
     	assertEquals(expected, outContent.toString());
     	System.setOut(originalOut);
     }
@@ -133,16 +171,10 @@ public class DataframeTest
     @Test
     public void printHeadCSVTest()
     {
-    	int[] indexes = new int[18];
-    	for (int i = 0; i < 18; i++) {
-    		indexes[i] = i*i;
-    	}
-    	data = new Dataframe("/quotas.csv", indexes);
-    	
     	ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     	PrintStream originalOut = System.out;
     	System.setOut(new PrintStream(outContent));
-    	data.printHead();
+    	dataCSV.printHead();
     	String expected = "StartDate OwnerName Username Rating QuotaAmount \n"
     			+ "2016-01-01 Chris Riley trailhead9.ub20k5i9t8ou@example.com 0.1 150000 \n"
     			+ "2016-02-01 Chris Riley trailhead9.ub20k5i9t8ou@example.com 0.2 150000 \n"
@@ -156,22 +188,15 @@ public class DataframeTest
     @Test
     public void printTailTest()
     {
-    	Object[][] o = new Object[2][2];
-    	o[0][0] = "Grenoble";
-    	o[1][0] = "Paris";
-    	o[0][1] = 115;
-    	o[1][1] = 300;
-    	
-    	String[] l = {"ville", "taille"};
-    	int[] indexes = {10, 5};
-    	
-    	data = new Dataframe(o, l, indexes);
-    	
     	ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     	PrintStream originalOut = System.out;
     	System.setOut(new PrintStream(outContent));
     	data.printTail();
-    	String expected = "ville taille \n" + "Grenoble 115 \n" + "Paris 300 \n";
+    	String expected = "ville taille population \n"
+    			+ "Grenoble 115.45 200000 \n"
+    			+ "Paris 300.59 6000000 \n"
+    			+ "Lyon 256.78 2000000 \n"
+    			+ "Marseille 234.56 1000000 \n";
     	assertEquals(expected, outContent.toString());
     	System.setOut(originalOut);
 
@@ -180,16 +205,10 @@ public class DataframeTest
     @Test
     public void printTailCSVTest()
     {
-    	int[] indexes = new int[18];
-    	for (int i = 0; i < 18; i++) {
-    		indexes[i] = i*i;
-    	}
-    	data = new Dataframe("/quotas.csv", indexes);
-    	
     	ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     	PrintStream originalOut = System.out;
     	System.setOut(new PrintStream(outContent));
-    	data.printTail();
+    	dataCSV.printTail();
     	String expected = "StartDate OwnerName Username Rating QuotaAmount \n"
     			+ "2016-02-01 Kelly Frazier trailhead7.zdcsy4ax10mr@example.com 0.14 150000 \n"
     			+ "2016-03-01 Kelly Frazier trailhead7.zdcsy4ax10mr@example.com 0.15 150000 \n"
