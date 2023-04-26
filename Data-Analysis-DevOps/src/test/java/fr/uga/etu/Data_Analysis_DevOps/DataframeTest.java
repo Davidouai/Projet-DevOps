@@ -40,7 +40,7 @@ public class DataframeTest
     	for (int i = 0; i < 18; i++) {
     		indexes[i] = i*i;
     	}
-    	data = new Dataframe("/home/m/mailletd/Bureau/quotas.csv", indexes);
+    	data = new Dataframe("/quotas.csv", indexes);
     	assertEquals(data.get("Username", indexes[6]), "trailhead19.d1fxj2goytkp@example.com");
     }
     

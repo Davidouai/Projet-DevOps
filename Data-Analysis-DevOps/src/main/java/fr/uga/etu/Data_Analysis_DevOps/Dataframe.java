@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,7 +47,8 @@ public class Dataframe
 	Dataframe(String filename, int[] indexes) {
 		data = new HashMap<>();
 		ArrayList<String> labels = new ArrayList<>();
-		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+		InputStream stream = Dataframe.class.getResourceAsStream(filename);
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
 			String line;
 			ArrayList<String> array = new ArrayList<>();
 			
