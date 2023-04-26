@@ -10,11 +10,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Dataframe 
 {
 	HashMap<String, ArrayList<Object>> data;
-	HashMap<Integer, Integer> indexes;
+	LinkedHashMap<Integer, Integer> indexes;
 	
 	Dataframe(Object[][] t, String labels[], int indexes[]) {
 		data = new HashMap<>();
@@ -27,7 +28,7 @@ public class Dataframe
 			data.put(labels[j], column);
 		}
 		
-		this.indexes = new HashMap<>();
+		this.indexes = new LinkedHashMap<>();
 		for(int i = 0; i < indexes.length; i++) {
 			this.indexes.put(indexes[i], i);
 		}
@@ -79,10 +80,39 @@ public class Dataframe
 			e.printStackTrace();
 		}
 		
-		this.indexes = new HashMap<>();
+		this.indexes = new LinkedHashMap<>();
 		for(int i = 0; i < indexes.length; i++) {
 			this.indexes.put(indexes[i], i);
 		}
+	}
+	
+	public Object[][] selectLines(int indexes[]) {
+		Object[][] lines = new Object[indexes.length][indexes.length];
+		
+		for (int line = 0; line < indexes.length; line++) {
+			int column = 0;
+			for (HashMap.Entry<String, ArrayList<Object>> mapentry : data.entrySet()) {
+				lines[line][column] = get(mapentry.getKey(), indexes[line]);
+				column++;
+			}
+		}
+		return lines;
+	}
+	
+	public Object[][] selectColumns(String labels[]) {
+		Object[][] columns = new Object[indexes.size()][labels.length];
+		
+			int line = 0;
+			for (HashMap.Entry<Integer, Integer> mapentry : indexes.entrySet()) {
+				int column = 0;
+				for (String label : labels) {
+					columns[line][column] = get(label, mapentry.getKey());
+					column++;
+				}
+				line++;
+			}
+		
+		return columns;
 	}
 	
 	public Object get(String label, int index) {
