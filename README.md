@@ -2,7 +2,8 @@
 [![Coverage](.github/badges/jacoco.svg)](https://github.com/HugolinBouhineau/Projet-DevOps/actions/workflows/maven.yml)
 
 # Projet-DevOps
-Java equivalent of python's Panda library test
+Java equivalent of python's Panda library\
+*by* Hugolin Bouhineau and Maillet David
 
 Library features :
 - Dataframe creation from object table or CSV file
@@ -15,7 +16,7 @@ Tools used :
 - Cicirello for code coverage badge generation https://github.com/cicirello/jacoco-badge-generator
 - Maven for project building
 - JUnit for unit testing
-- Jacoco for code coverage
+- Jacoco for code coverage report generation
 
 Devops features : 
 - Automatically launch tests when pushing on main branch
