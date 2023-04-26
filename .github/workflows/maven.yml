@@ -31,6 +31,21 @@ jobs:
       run: mvn -B package --file pom.xml
     - name: Run the Maven verify phase
       run: mvn --batch-mode --update-snapshots verify
+    - name: Generate JaCoCo Badge
+      uses: cicirello/jacoco-badge-generator@v2
+      with:
+        jacoco-csv-file: Data-Analysis-DevOps/target/site/jacoco/jacoco.csv
+    - name: Commit and push the badge (if it changed)
+      uses: EndBug/add-and-commit@v7
+      with:
+        default_author: github_actions
+        message: 'commit coverage badge'
+        add: '*.svg'
+    - name: Upload JaCoCo coverage report
+      uses: actions/upload-artifact@v2
+      with:
+        name: jacoco-report
+        path: Data-Analysis-DevOps/target/site/jacoco/
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     #- name: Update dependency graph

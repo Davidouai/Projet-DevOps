@@ -1,6 +1,5 @@
 package fr.uga.etu.Data_Analysis_DevOps;
 
-//import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
