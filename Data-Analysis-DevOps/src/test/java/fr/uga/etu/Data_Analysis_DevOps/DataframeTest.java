@@ -92,6 +92,17 @@ public class DataframeTest
     		}
     	}
     }
+
+    @Test
+    public void checkEqualsSelection()
+    {
+    	data = new Dataframe(objects, labels, indexes);
+    	
+    	Object[][] o2 = data.selectLinesEquals(6000000);
+    	
+    	assertEquals(o2[0][0], objects[1][0]);
+    	
+    }
     
     
 }

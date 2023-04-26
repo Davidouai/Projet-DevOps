@@ -87,7 +87,7 @@ public class Dataframe
 	}
 	
 	public Object[][] selectLines(int indexes[]) {
-		Object[][] lines = new Object[indexes.length][indexes.length];
+		Object[][] lines = new Object[indexes.length][getNbColumns()];
 		
 		for (int line = 0; line < indexes.length; line++) {
 			int column = 0;
@@ -115,8 +115,42 @@ public class Dataframe
 		return columns;
 	}
 	
+	// Selectionne les lignes dans les quelles un des attributs vaut o
+	public Object[][] selectLinesEquals(Object o) {
+		ArrayList<Integer> selectedLinesIndexes = new ArrayList<>();
+		for (HashMap.Entry<Integer, Integer> indexEntry : indexes.entrySet()) {
+			for (HashMap.Entry<String, ArrayList<Object>> labelEntry : data.entrySet()) {
+				boolean isInLine = false;
+				if (get(labelEntry.getKey(), indexEntry.getKey()).equals(o)) {
+					isInLine = true;
+				}
+				if (isInLine) {
+					selectedLinesIndexes.add(indexEntry.getKey());
+				}
+			}
+		}
+		
+		Object[][] lines = new Object[selectedLinesIndexes.size()][getNbColumns()];
+		for (int line = 0; line < selectedLinesIndexes.size(); line++) {
+			int column = 0;
+			for (HashMap.Entry<String, ArrayList<Object>> labelEntry : data.entrySet()) {
+				lines[line][column] = get(labelEntry.getKey(), selectedLinesIndexes.get(line));
+				column++;
+			}
+		}
+		
+		return lines;
+	}
+	
 	public Object get(String label, int index) {
 		return data.get(label).get(indexes.get(index));
+	}
+	
+	public int getNbColumns() {
+		for (HashMap.Entry<String, ArrayList<Object>> labelEntry : data.entrySet()) {
+			return labelEntry.getValue().size();
+		}
+		return 0;
 	}
 	
 	public static boolean isInteger(String strNum) {
