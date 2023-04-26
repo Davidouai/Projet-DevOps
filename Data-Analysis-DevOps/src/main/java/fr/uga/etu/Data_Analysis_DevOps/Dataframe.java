@@ -13,28 +13,18 @@ import java.util.HashMap;
 
 public class Dataframe 
 {
-	HashMap<String, Column> data;
+	HashMap<String, ArrayList<Object>> data;
 	HashMap<Integer, Integer> indexes;
 	
 	Dataframe(Object[][] t, String labels[], int indexes[]) {
 		data = new HashMap<>();
 		
-		for(int j = 0; j < labels.length; j++) {	// A proprifier
-			if (t[0][j] instanceof String) {
-				ArrayList<String> c = new ArrayList<>();
-				for(int i = 0; i < t.length; i++) {
-					c.add((String) t[i][j]);
-				}
-				Column<String> column = new Column<>(c);
-				data.put(labels[j], column);
-			} else if (t[0][j] instanceof Integer) {
-				ArrayList<Integer> c = new ArrayList<>();
-				for(int i = 0; i < t.length; i++) {
-					c.add((Integer) t[i][j]);
-				}
-				Column<Integer> column = new Column<>(c);
-				data.put(labels[j], column);
+		for(int j = 0; j < labels.length; j++) {
+			ArrayList<Object> column = new ArrayList<>();
+			for(int i = 0; i < t.length; i++) {
+				column.add(t[i][j]);
 			}
+			data.put(labels[j], column);
 		}
 		
 		this.indexes = new HashMap<>();
@@ -59,14 +49,25 @@ public class Dataframe
 		        
 		        if (i == 0) {	// Première ligne : labels
 		        	labels = array;
-		        } else {	// TODO : voir si int ou string et enlever les guillemets
+		        } else {
 		        	for(int j = 0; j < array.size(); j++) {
-		        		if (data.get(labels.get(j)) != null) {
-		        			data.get(labels.get(j)).add(array.get(j));
-		        		} else {
-			        		ArrayList<String> c = new ArrayList<>();
-			        		c.add(array.get(j));
-							Column<String> column = new Column<>(c);
+		        		if (data.get(labels.get(j)) != null) {	// Si il y a deja des éléments dans cette colonne
+		        			if (isInteger(array.get(j))) {
+			        			data.get(labels.get(j)).add(Integer.parseInt(array.get(j)));
+		        			} else if (isFloat(array.get(j))) {
+			        			data.get(labels.get(j)).add(Float.parseFloat(array.get(j)));
+		        			} else {
+			        			data.get(labels.get(j)).add(array.get(j));
+		        			}
+		        		} else {								// Sinon, il faut créer la colonne
+			        		ArrayList<Object> column = new ArrayList<>();
+		        			if (isInteger(array.get(j))) {
+				        		column.add(Integer.parseInt(array.get(j)));
+		        			} else if (isFloat(array.get(j))) {
+		        				column.add(Float.parseFloat(array.get(j)));
+		        			} else {
+				        		column.add(array.get(j));
+		        			}
 			        		data.put(labels.get(j), column);
 		        		}
 		        	}
@@ -86,6 +87,30 @@ public class Dataframe
 	
 	public Object get(String label, int index) {
 		return data.get(label).get(indexes.get(index));
+	}
+	
+	public static boolean isInteger(String strNum) {
+	    if (strNum == null) {
+	        return false;
+	    }
+	    try {
+	        double d = Integer.parseInt(strNum);
+	    } catch (NumberFormatException nfe) {
+	        return false;
+	    }
+	    return true;
+	}
+	
+	public static boolean isFloat(String strNum) {
+	    if (strNum == null) {
+	        return false;
+	    }
+	    try {
+	        double d = Float.parseFloat(strNum);
+	    } catch (NumberFormatException nfe) {
+	        return false;
+	    }
+	    return true;
 	}
 	
 	
