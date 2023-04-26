@@ -4,4 +4,8 @@
 # Projet-DevOps
 Java equivalent of python's Panda library test
 
-Checkout our website at https://hugolinbouhineau.github.io/Projet-DevOps/ !
+Devops functionality : 
+- Automatically launch tests when pushing on main branch
+- Automatically generate code coverage report when pushing on main branch
+- Display results of tests and code coverage in README using badges
+- Automatically deploy a website using github pages that displays the README, available here : https://hugolinbouhineau.github.io/Projet-DevOps/
