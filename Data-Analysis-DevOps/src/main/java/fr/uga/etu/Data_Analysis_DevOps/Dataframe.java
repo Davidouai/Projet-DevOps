@@ -177,9 +177,60 @@ public class Dataframe
 	    return true;
 	}
 	
+	public void printAll() {
+		ArrayList<String> lines = new ArrayList<>();
+		lines.add("");
+		for (String key: data.keySet()) {
+			lines.set(0, lines.get(0).concat(key+" "));
+		    ArrayList<Object> value = data.get(key);
+		    for(int i=0; i<value.size(); i++) {
+		    	if(lines.size()==i+1){
+		    		lines.add("");
+		    	}
+		    	lines.set(i+1, lines.get(i+1).concat(value.get(i)+" "));
+		    }
+		}
+		for(String line : lines) {
+			System.out.println(line);
+		}
+	}
 	
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
-    }
+	// Prints only the first 5 rows
+	public void printHead() {
+		ArrayList<String> lines = new ArrayList<>();
+		lines.add("");
+		for (String key: data.keySet()) {
+			lines.set(0, lines.get(0).concat(key+" "));
+		    ArrayList<Object> value = data.get(key);
+		    for(int i=0; i<value.size() && i<5; i++) {
+		    	if(lines.size()==i+1){
+		    		lines.add("");
+		    	}
+		    	lines.set(i+1, lines.get(i+1).concat(value.get(i)+" "));
+		    }
+		}
+		for(String line : lines) {
+			System.out.println(line);
+		}
+	}
+	
+	// Print only the last 5 rows
+	public void printTail() {
+		ArrayList<String> lines = new ArrayList<>();
+		lines.add("");
+		for (String key: data.keySet()) {
+			lines.set(0, lines.get(0).concat(key+" "));
+		    ArrayList<Object> value = data.get(key);
+		    int start = Math.max(value.size()-5, 0);
+		    for(int i=0; i+start<value.size() && i<5; i++) {
+		    	if(lines.size()==i+1){
+		    		lines.add("");
+		    	}
+		    	lines.set(i+1, lines.get(i+1).concat(value.get(i+start)+" "));
+		    }
+		}
+		for(String line : lines) {
+			System.out.println(line);
+		}
+	}
 }
